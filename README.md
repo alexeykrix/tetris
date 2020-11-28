@@ -1,2 +1,1 @@
-# tetris
-tetris on js
+# https://alexeykrix.github.io/tetris/

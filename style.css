@@ -12,7 +12,7 @@
 }
 
 #app {
-  margin: 20px auto;
+  margin: 10px auto 0;
   width: fit-content;
 }
 
@@ -21,7 +21,7 @@ canvas {
 }
 
 .container {
-  margin: 10px auto;
+  margin: 10px auto 0;
   width: auto;
 }
 .container span {
@@ -55,7 +55,7 @@ canvas {
 
 .btn {
   position: absolute;
-  right: -40px;
+  right: -25px;
   display: inline-block;
   cursor: pointer;
   margin: 5px 5px;

@@ -23,8 +23,8 @@ let cellsY = canvas.height / cellSize
 const figures = [
   [ //  I
     [{x: 2, y: 0}, {x: 2, y: 1}, {x: 2, y: 2}, {x: 2, y: 3},],
-    [{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 3, y: 1},],
-    [{x: 2, y: 0}, {x: 2, y: 1}, {x: 2, y: 2}, {x: 2, y: 3},],
+    [{x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}, {x: 3, y: 2},],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 1, y: 3},],
     [{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 3, y: 1},]
   ],
   [ // J
@@ -47,8 +47,8 @@ const figures = [
   ],
   [ // S
     [{x: 1, y: 0}, {x: 2, y: 0}, {x: 0, y: 1}, {x: 1, y: 1},],
-    [{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2},],
-    [{x: 1, y: 0}, {x: 2, y: 0}, {x: 0, y: 1}, {x: 1, y: 1},],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 2, y: 2},],
+    [{x: 1, y: 1}, {x: 2, y: 1}, {x: 0, y: 2}, {x: 1, y: 2},],
     [{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2},],
   ],
   [ // T
@@ -59,8 +59,8 @@ const figures = [
   ],
   [ // Z
     [{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}, ],
-    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}, ],
-    [{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}, ],
+    [{x: 2, y: 0}, {x: 2, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}, ],
+    [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 2, y: 2}, ],
     [{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}, ],
   ],
 ]
@@ -419,20 +419,59 @@ btnReset.addEventListener('click', () => {
   init()
 })
 
+let touchOldX
+let touchOldY
+
 document.addEventListener('touchstart', e => {
   let t = e.touches[0]
-  
-  let width = window.innerWidth
-  let height = window.innerHeight
 
-  if (width/2 > t.clientX && height/2 < t.clientY) leftHandler()
-  if (width/2 < t.clientX && height/2 < t.clientY) rightHandler()
-  if (height/2 > t.clientY) rotateHandler()
-  if (height - 0.8*height < t.clientY) moveFigure()
+  touchOldX = t.clientX
+  touchOldY = t.clientY
+  
+  if (e.target.id) {
+    if (e.target.id === 'info') {
+      return
+    }
+  }
 
   if (renderTimeout === undefined) {
     renderTimeout = setInterval(() =>render(), 20)
     moveTimeout = setInterval(() =>moveFigure(), speed)
   }
-
 })
+
+document.addEventListener('touchmove', e => {
+  let tX = e.touches[0].clientX
+  let tY = e.touches[0].clientY
+
+  let moduleX = touchOldX - tX
+  let moduleY = tY - touchOldY
+
+  if (moduleY > 100) moveFigure()
+
+  if (moduleX < -20) rightHandler()
+  if (moduleX > 20) leftHandler()
+  else return
+  touchOldX = tX
+  touchOldY = tY
+  
+
+  if (e.target.id) {
+    if (e.target.id === 'info') {
+      return
+    }
+  }
+})
+
+document.addEventListener('touchend', e => {
+  let t = e.changedTouches[0].clientX
+  let moduleX = touchOldX - t
+
+  if (e.target.id) {
+    if (e.target.id === 'info') return
+  }
+
+  if (moduleX === 0) rotateHandler()
+})
+
+canvasInfo.addEventListener('touchstart', e => moveFigure())

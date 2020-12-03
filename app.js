@@ -63,8 +63,51 @@ const figures = [
     [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 2, y: 2}, ],
     [{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}, ],
   ],
+  [ //  I
+    [{x: 2, y: 0}, {x: 2, y: 1}, {x: 2, y: 2}, {x: 2, y: 3},],
+    [{x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}, {x: 3, y: 2},],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 1, y: 3},],
+    [{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 3, y: 1},]
+  ],
+  [ // J
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 2},],
+    [{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1},],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 2, y: 0},],
+    [{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 2, y: 2},]
+  ],
+  [ // L
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 2, y: 2},],
+    [{x: 0, y: 2}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1},],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 0},],
+    [{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 2, y: 0},]
+  ],
+  [ // O
+    [{x: 1, y: 0}, {x: 2, y: 0}, {x: 1, y: 1}, {x: 2, y: 1},],
+    [{x: 1, y: 0}, {x: 2, y: 0}, {x: 1, y: 1}, {x: 2, y: 1},],
+    [{x: 1, y: 0}, {x: 2, y: 0}, {x: 1, y: 1}, {x: 2, y: 1},],
+    [{x: 1, y: 0}, {x: 2, y: 0}, {x: 1, y: 1}, {x: 2, y: 1},]
+  ],
+  [ // S
+    [{x: 1, y: 0}, {x: 2, y: 0}, {x: 0, y: 1}, {x: 1, y: 1},],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 2, y: 2},],
+    [{x: 1, y: 1}, {x: 2, y: 1}, {x: 0, y: 2}, {x: 1, y: 2},],
+    [{x: 0, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2},],
+  ],
+  [ // T
+    [{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 1, y: 2},],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 0, y: 1},],
+    [{x: 0, y: 1}, {x: 1, y: 1}, {x: 2, y: 1}, {x: 1, y: 0},],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 2, y: 1},],
+  ],
+  [ // Z
+    [{x: 0, y: 0}, {x: 1, y: 0}, {x: 1, y: 1}, {x: 2, y: 1}, ],
+    [{x: 2, y: 0}, {x: 2, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}, ],
+    [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 2}, {x: 2, y: 2}, ],
+    [{x: 1, y: 0}, {x: 1, y: 1}, {x: 0, y: 1}, {x: 0, y: 2}, ],
+  ],
 ]
 let gameData = []
+let directions = []
 let figId
 let figure, current = []
 let figRotate = 0
@@ -111,6 +154,10 @@ const checkSolved = () => {
 let nextFigureId
 nextFigureId = randomFigure()
 
+
+let touchOldY
+let touchOldX
+
 const nextFig = (isInit) => {
   isInit? '' : current.forEach(el => gameData.push(JSON.parse(JSON.stringify(el))))
   let colors = ['#e67e22','#e74c3c','#3498db','#9b59b6','#f1c40f',
@@ -126,6 +173,9 @@ const nextFig = (isInit) => {
   checkSolved()
   nextFigureId = randomFigure()
   
+  directions = []
+  touchOldY = null
+  touchOldX = null
 }
 
 
@@ -136,7 +186,7 @@ const clearCanvas = () => {
   c.fill()
   c.closePath()
 
-  cInfo.fillStyle = '#3d3d3e'
+  cInfo.fillStyle = '#121212'
   cInfo.beginPath()
   cInfo.rect(0, 0, canvas.width, canvas.height)
   cInfo.fill()
@@ -161,7 +211,18 @@ const renderNextBlock = (x, y, color) => {
   cInfo.closePath()
 }
 
+const makeChanges = () => {
+  let d = directions[0]
+  if (d === 'moveDown') moveFigure() 
+  if (d === 'moveLeft') leftHandler()
+  if (d === 'moveRight') rightHandler()
+  if (d === 'rotate') rotateHandler()
+
+  directions.shift()
+}
+
 const render = () => {
+  makeChanges()
   clearCanvas()
 
   cInfo.fillStyle = '#e67e22'
@@ -201,7 +262,7 @@ const moveFigure = () => {
 
   if (scoreMylty > 0) {
     clearInterval(moveTimeout)
-    moveTimeout = setInterval(() =>moveFigure(), speed)
+    moveTimeout = setInterval(() =>directions.push('moveDown'), speed)
   } 
   score += scoreset[scoreMylty]
   scoreMylty = 0
@@ -242,6 +303,7 @@ const moveFigure = () => {
       score = 0
       clearInterval(renderTimeout)
       clearInterval(moveTimeout)
+      directions = []
       renderTimeout = undefined
       moveTimeout = undefined
     
@@ -271,7 +333,7 @@ let moveTimeout
 const init = () => {
   nextFig(true)
   renderTimeout = setInterval(() =>render(), 20)
-  moveTimeout = setInterval(() =>moveFigure(), speed)
+  moveTimeout = setInterval(() =>directions.push('moveDown'), speed)
   render()
 }
 init()
@@ -389,13 +451,14 @@ const keydownHandler = (e) => {
   if (renderTimeout === undefined && 
       (e.code === 'Space' || e.code === 'KeyP' ||
       e.code === 'Enter' || e.code === 'Escape')) {
+    directions= []
     renderTimeout = setInterval(() =>render(), 20)
-    moveTimeout = setInterval(() =>moveFigure(), speed)
+    moveTimeout = setInterval(() =>directions.push('moveDown'), speed)
   }
-  if (e.code === 'KeyW' || e.code === 'ArrowUp') rotateHandler()
-  if (e.code === 'KeyA' || e.code === 'ArrowLeft') leftHandler()
-  if (e.code === 'KeyD' || e.code === 'ArrowRight') rightHandler()
-  if (e.code === 'KeyS' || e.code === 'ArrowDown') moveFigure()
+  if (e.code === 'KeyW' || e.code === 'ArrowUp') directions.push('rotate')
+  if (e.code === 'KeyA' || e.code === 'ArrowLeft') directions.push('moveLeft')
+  if (e.code === 'KeyD' || e.code === 'ArrowRight') directions.push('moveRight')
+  if (e.code === 'KeyS' || e.code === 'ArrowDown') directions.push('moveDown')
 }
 
 document.addEventListener('keydown', keydownHandler)
@@ -405,6 +468,7 @@ btnPause.addEventListener('click', () => {
   clearInterval(moveTimeout)
   renderTimeout = undefined
   moveTimeout = undefined
+  directions= []
 
   c.fillStyle = '#121212f0'
   c.beginPath()
@@ -416,13 +480,11 @@ btnReset.addEventListener('click', () => {
   clearInterval(renderTimeout)
   clearInterval(moveTimeout)
   gameData = []
+  directions= []
   init()
 })
 
-let touchOldX
-let touchOldY
-
-document.addEventListener('touchstart', e => {
+canvas.addEventListener('touchstart', e => {
   let t = e.touches[0]
 
   touchOldX = t.clientX
@@ -436,34 +498,44 @@ document.addEventListener('touchstart', e => {
 
   if (renderTimeout === undefined) {
     renderTimeout = setInterval(() =>render(), 20)
-    moveTimeout = setInterval(() =>moveFigure(), speed)
+    moveTimeout = setInterval(() =>directions.push('moveDown'), speed)
   }
 })
 
-document.addEventListener('touchmove', e => {
+canvas.addEventListener('touchmove', e => {
   let tX = e.touches[0].clientX
   let tY = e.touches[0].clientY
+  
+  if (touchOldX === null || touchOldY === null) {
+    touchOldX = tX
+    touchOldY = tY
+    return
+  }
 
   let moduleX = touchOldX - tX
   let moduleY = tY - touchOldY
 
-  if (moduleY > 100) moveFigure()
-
-  if (moduleX < -20) rightHandler()
-  if (moduleX > 20) leftHandler()
-  else return
-  touchOldX = tX
-  touchOldY = tY
-  
-
-  if (e.target.id) {
-    if (e.target.id === 'info') {
-      return
-    }
+  if (moduleY > 100) {
+    directions.push('moveDown')
+    touchOldX = tX
+    touchOldY = tY
+    return
+  }
+  if (moduleX < -30) {
+    directions.push('moveRight')
+    touchOldX = tX
+    touchOldY = tY
+    return
+  }
+  if (moduleX > 30) {
+    directions.push('moveLeft')
+    touchOldX = tX
+    touchOldY = tY
+    return
   }
 })
 
-document.addEventListener('touchend', e => {
+canvas.addEventListener('touchend', e => {
   let t = e.changedTouches[0].clientX
   let moduleX = touchOldX - t
 

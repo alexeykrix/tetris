@@ -195,13 +195,13 @@ class Tetris {
     this.touchOldX = null
   }
   clearCanvas = () => {
-    this.c.fillStyle = '#3d3d3e'
+    this.c.fillStyle = '#000'
     this.c.beginPath()
     this.c.rect(0, 0, this.canvas.width, this.canvas.height)
     this.c.fill()
     this.c.closePath()
   
-    this.cInfo.fillStyle = '#121212'
+    this.cInfo.fillStyle = '#000'
     this.cInfo.beginPath()
     this.cInfo.rect(0, 0, this.canvas.width, this.canvas.height)
     this.cInfo.fill()
@@ -236,7 +236,7 @@ class Tetris {
     this.makeChanges()
     this.clearCanvas()
   
-    this.cInfo.fillStyle = '#e67e22'
+    this.cInfo.fillStyle = '#fff'
     this.cInfo.font = '20px "Roboto Mono"'
     this.cInfo.textAlign = 'right';
     this.cInfo.fillText('best: '+ (localStorage.getItem('bestTetris') || 0), 290, 27)
@@ -247,7 +247,7 @@ class Tetris {
     this.c.fillText(this.score, this.canvas.width/2, this.canvas.width/2+20)
     
     this.figures[this.nextFigureId][0]
-      .forEach( block => this.renderNextBlock(block.x, block.y, '#e67e22'))
+      .forEach( block => this.renderNextBlock(block.x, block.y, '#fff'))
   
     let fallFigure = [0,0,0,0,0,0,0,0,0,0]
     this.current.forEach(block=> {
@@ -259,7 +259,7 @@ class Tetris {
     fallFigure.forEach((y, x) => {
       if (y > 0) {
         for (let i=1; i < 20; i++) {
-          this.renderBlock(x, y+i, '#12121240')
+          this.renderBlock(x, y+i, '#ffffff40')
         }
       }
     })
